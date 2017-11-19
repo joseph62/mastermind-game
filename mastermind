@@ -1,0 +1,49 @@
+#! /usr/bin/env python3
+
+from lib.game import Mastermind,MasterController,MasterResult
+
+def print_help():
+    print("""!quit : quit the game
+!restart : restart the game
+!help : print out this message
+!guesses : print out guesses
+<numbers> : process guess
+""")
+
+
+def play():
+    game = Mastermind()
+    controller = MasterController(game)
+    result = MasterResult.Continue
+    print_help()
+    while result != MasterResult.Win and result != MasterResult.Quit:
+        input_ = input(">>> ")
+        result = controller.move(input_)
+        if result == MasterResult.Help:
+            print_help()
+        elif result == MasterResult.Guesses:
+            print(game.show_guesses())
+        elif result == MasterResult.Restart:
+            print("Restarting...")
+            print("The number was: {}".format(game.number()))
+            game = Mastermind()
+            controller = MasterController(game)
+        elif result == MasterResult.Quit:
+            print("Quitting...")
+            print("The number was: {}".format(game.number()))
+        elif result == MasterResult.Win:
+            print(game.latest_guess())
+            print("You win!")
+            if input("Continue? (y/n): ").lower() != 'y':
+                result = MasterResult.Continue
+                game = Mastermind()
+                controller = MasterController(game)
+        elif result == MasterResult.BadInput:
+            print("Bad input!")
+            print_help()
+        else:
+            print(game.latest_guess())
+
+
+if __name__ == '__main__':
+    play()
